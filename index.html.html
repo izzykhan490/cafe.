@@ -1,0 +1,1386 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The Daily Grind — Brisbane's Neighbourhood Café</title>
+<style>
+  /* ── Reset & base ─────────────────────────────────────────── */
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --cream:      #F5EFE0;
+    --cream-dark: #EDE4CC;
+    --espresso:   #2C1A0E;
+    --coffee:     #6B3F1F;
+    --amber:      #C8862A;
+    --amber-light:#E8A94A;
+    --text:       #3A2212;
+    --text-light: #7A5C42;
+    --white:      #FDFAF4;
+
+    --serif: Georgia, 'Times New Roman', serif;
+    --sans:  'Segoe UI', system-ui, -apple-system, sans-serif;
+
+    --section-pad: clamp(4rem, 8vw, 7rem) clamp(1.25rem, 5vw, 5rem);
+    --max-w: 1100px;
+    --radius: 3px;
+  }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    font-family: var(--sans);
+    background: var(--cream);
+    color: var(--text);
+    line-height: 1.6;
+    overflow-x: hidden;
+  }
+
+  img { display: block; max-width: 100%; }
+
+  /* ── Typography ───────────────────────────────────────────── */
+  .serif { font-family: var(--serif); }
+
+  h1, h2, h3 {
+    font-family: var(--serif);
+    line-height: 1.2;
+    color: var(--espresso);
+  }
+
+  .section-label {
+    display: inline-block;
+    font-family: var(--sans);
+    font-size: 0.7rem;
+    font-weight: 700;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: var(--amber);
+    margin-bottom: 0.75rem;
+  }
+
+  .section-title {
+    font-size: clamp(2rem, 4vw, 3rem);
+    margin-bottom: 1.25rem;
+  }
+
+  .section-intro {
+    font-size: 1.05rem;
+    color: var(--text-light);
+    max-width: 600px;
+    line-height: 1.75;
+  }
+
+  /* ── Divider ──────────────────────────────────────────────── */
+  .divider {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    margin: 1.5rem 0 2.5rem;
+  }
+  .divider::before, .divider::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: linear-gradient(to right, transparent, var(--amber), transparent);
+    opacity: 0.5;
+  }
+  .divider-icon {
+    color: var(--amber);
+    font-size: 1.1rem;
+    opacity: 0.8;
+  }
+
+  /* ── Fade-in on scroll ────────────────────────────────────── */
+  .reveal {
+    opacity: 0;
+    transform: translateY(28px);
+    transition: opacity 0.65s ease, transform 0.65s ease;
+  }
+  .reveal.visible {
+    opacity: 1;
+    transform: none;
+  }
+
+  /* ── Nav ──────────────────────────────────────────────────── */
+  nav {
+    position: fixed;
+    top: 0; left: 0; right: 0;
+    z-index: 100;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1.1rem clamp(1.25rem, 5vw, 4rem);
+    transition: background 0.35s, box-shadow 0.35s;
+  }
+  nav.scrolled {
+    background: rgba(44, 26, 14, 0.97);
+    box-shadow: 0 2px 18px rgba(0,0,0,0.25);
+  }
+
+  .nav-logo {
+    font-family: var(--serif);
+    font-size: 1.35rem;
+    color: var(--white);
+    text-decoration: none;
+    letter-spacing: 0.02em;
+  }
+  .nav-logo span { color: var(--amber); }
+
+  .nav-links {
+    display: flex;
+    gap: 2rem;
+    list-style: none;
+  }
+  .nav-links a {
+    color: rgba(253,250,244,0.82);
+    text-decoration: none;
+    font-size: 0.85rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    font-weight: 600;
+    transition: color 0.2s;
+  }
+  .nav-links a:hover { color: var(--amber-light); }
+
+  /* hamburger */
+  .nav-toggle {
+    display: none;
+    flex-direction: column;
+    gap: 5px;
+    cursor: pointer;
+    background: none;
+    border: none;
+    padding: 4px;
+  }
+  .nav-toggle span {
+    display: block;
+    width: 24px;
+    height: 2px;
+    background: var(--white);
+    transition: transform 0.3s, opacity 0.3s;
+  }
+  .nav-toggle.open span:nth-child(1) { transform: translateY(7px) rotate(45deg); }
+  .nav-toggle.open span:nth-child(2) { opacity: 0; }
+  .nav-toggle.open span:nth-child(3) { transform: translateY(-7px) rotate(-45deg); }
+
+  @media (max-width: 720px) {
+    .nav-toggle { display: flex; }
+    .nav-links {
+      display: none;
+      position: absolute;
+      top: 100%; left: 0; right: 0;
+      background: rgba(44,26,14,0.98);
+      flex-direction: column;
+      gap: 0;
+      padding: 0.5rem 0 1rem;
+    }
+    .nav-links.open { display: flex; }
+    .nav-links a {
+      display: block;
+      padding: 0.75rem clamp(1.25rem, 5vw, 4rem);
+    }
+  }
+
+  /* ── Hero ─────────────────────────────────────────────────── */
+  #hero {
+    min-height: 100svh;
+    background: var(--espresso);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: flex-start;
+    padding: var(--section-pad);
+    position: relative;
+    overflow: hidden;
+  }
+
+  /* Ambient coffee-grain texture overlay */
+  #hero::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background-image:
+      radial-gradient(ellipse 80% 60% at 70% 50%, rgba(107,63,31,0.35) 0%, transparent 70%),
+      url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='4' height='4'%3E%3Crect width='4' height='4' fill='%232C1A0E'/%3E%3Ccircle cx='1' cy='1' r='0.5' fill='%23ffffff06'/%3E%3Ccircle cx='3' cy='3' r='0.5' fill='%23ffffff04'/%3E%3C/svg%3E");
+    pointer-events: none;
+  }
+
+  /* Steam animation */
+  .steam-wrap {
+    position: absolute;
+    right: clamp(5%, 12vw, 18%);
+    top: 50%;
+    transform: translateY(-55%);
+    opacity: 0.12;
+    pointer-events: none;
+  }
+  .steam-cup {
+    width: clamp(180px, 28vw, 380px);
+    fill: none;
+    stroke: var(--amber);
+  }
+
+  @keyframes steam {
+    0%   { d: path("M10 30 C10 20, 20 10, 15 0"); opacity: 0; transform: translateY(0) scaleX(1); }
+    40%  { opacity: 1; }
+    100% { d: path("M10 30 C5 15, 22 5, 12 -20");  opacity: 0; transform: translateY(-12px) scaleX(1.3); }
+  }
+  .steam-line {
+    stroke: var(--amber-light);
+    stroke-width: 2.5;
+    stroke-linecap: round;
+    fill: none;
+    animation: steam-rise 2.6s ease-in-out infinite;
+    opacity: 0;
+  }
+  .steam-line:nth-child(2) { animation-delay: 0.85s; }
+  .steam-line:nth-child(3) { animation-delay: 1.7s; }
+
+  @keyframes steam-rise {
+    0%   { transform: translateY(0)   scaleX(1);   opacity: 0; }
+    20%  { opacity: 0.7; }
+    80%  { opacity: 0.4; }
+    100% { transform: translateY(-45px) scaleX(1.4); opacity: 0; }
+  }
+
+  .hero-content { position: relative; z-index: 1; max-width: 620px; }
+
+  .hero-eyebrow {
+    display: inline-block;
+    font-size: 0.72rem;
+    font-weight: 700;
+    letter-spacing: 0.28em;
+    text-transform: uppercase;
+    color: var(--amber);
+    margin-bottom: 1.25rem;
+  }
+
+  .hero-title {
+    font-family: var(--serif);
+    font-size: clamp(2.8rem, 7vw, 5.5rem);
+    color: var(--white);
+    line-height: 1.08;
+    margin-bottom: 1.5rem;
+  }
+  .hero-title em {
+    font-style: italic;
+    color: var(--amber-light);
+  }
+
+  .hero-subtitle {
+    font-size: clamp(1rem, 2vw, 1.2rem);
+    color: rgba(253,250,244,0.65);
+    line-height: 1.7;
+    margin-bottom: 2.5rem;
+    max-width: 480px;
+  }
+
+  .hero-ctas {
+    display: flex;
+    gap: 1rem;
+    flex-wrap: wrap;
+  }
+
+  .btn-primary {
+    display: inline-block;
+    padding: 0.85rem 2rem;
+    background: var(--amber);
+    color: var(--espresso);
+    font-weight: 700;
+    font-size: 0.85rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    text-decoration: none;
+    border-radius: var(--radius);
+    transition: background 0.2s, transform 0.2s;
+  }
+  .btn-primary:hover { background: var(--amber-light); transform: translateY(-2px); }
+
+  .btn-ghost {
+    display: inline-block;
+    padding: 0.85rem 2rem;
+    border: 1px solid rgba(253,250,244,0.3);
+    color: rgba(253,250,244,0.85);
+    font-weight: 600;
+    font-size: 0.85rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    text-decoration: none;
+    border-radius: var(--radius);
+    transition: border-color 0.2s, color 0.2s;
+  }
+  .btn-ghost:hover { border-color: var(--amber); color: var(--amber-light); }
+
+  .hero-scroll-hint {
+    position: absolute;
+    bottom: 2.5rem;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.4rem;
+    color: rgba(253,250,244,0.35);
+    font-size: 0.68rem;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+  }
+  .scroll-line {
+    width: 1px;
+    height: 40px;
+    background: linear-gradient(to bottom, rgba(200,134,42,0.6), transparent);
+    animation: scroll-bob 2s ease-in-out infinite;
+  }
+  @keyframes scroll-bob {
+    0%, 100% { transform: scaleY(1); opacity: 0.6; }
+    50%       { transform: scaleY(0.7); opacity: 0.2; }
+  }
+
+  /* ── About ────────────────────────────────────────────────── */
+  #about {
+    padding: var(--section-pad);
+    background: var(--white);
+  }
+  .about-inner {
+    max-width: var(--max-w);
+    margin: 0 auto;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: clamp(2rem, 6vw, 5rem);
+    align-items: center;
+  }
+  .about-visual {
+    position: relative;
+  }
+  .about-img-frame {
+    width: 100%;
+    aspect-ratio: 4/5;
+    background: var(--espresso);
+    border-radius: 2px;
+    overflow: hidden;
+    position: relative;
+  }
+  .about-img-frame img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center;
+    display: block;
+  }
+  .about-badge {
+    position: absolute;
+    bottom: -1.5rem;
+    right: -1.5rem;
+    width: 7rem;
+    height: 7rem;
+    background: var(--amber);
+    border-radius: 50%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    color: var(--espresso);
+    font-weight: 700;
+    line-height: 1.2;
+    font-size: 0.75rem;
+    box-shadow: 0 4px 20px rgba(200,134,42,0.35);
+  }
+  .about-badge strong { font-size: 1.5rem; display: block; }
+
+  .about-text { }
+  .about-text p {
+    color: var(--text-light);
+    line-height: 1.8;
+    margin-bottom: 1.1rem;
+  }
+  .about-text p strong { color: var(--espresso); font-weight: 600; }
+
+  .about-values {
+    display: flex;
+    gap: 1.5rem;
+    margin-top: 2rem;
+    flex-wrap: wrap;
+  }
+  .value-pill {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    background: var(--cream);
+    padding: 0.5rem 1rem;
+    border-radius: 100px;
+    font-size: 0.82rem;
+    font-weight: 600;
+    color: var(--coffee);
+    border: 1px solid var(--cream-dark);
+  }
+  .value-pill .icon { font-size: 1rem; }
+
+  @media (max-width: 760px) {
+    .about-inner { grid-template-columns: 1fr; }
+    .about-badge { right: 1rem; bottom: -1.2rem; width: 5.5rem; height: 5.5rem; }
+    .about-badge strong { font-size: 1.2rem; }
+  }
+
+  /* ── Menu ─────────────────────────────────────────────────── */
+  #menu {
+    padding: var(--section-pad);
+    background: var(--cream);
+  }
+  .menu-inner { max-width: var(--max-w); margin: 0 auto; }
+  .menu-header { margin-bottom: 3rem; }
+
+  .menu-tabs {
+    display: flex;
+    gap: 0.5rem;
+    margin-bottom: 2.5rem;
+    flex-wrap: wrap;
+  }
+  .tab-btn {
+    padding: 0.55rem 1.4rem;
+    border: 1.5px solid var(--cream-dark);
+    background: transparent;
+    font-family: var(--sans);
+    font-size: 0.8rem;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--text-light);
+    cursor: pointer;
+    border-radius: var(--radius);
+    transition: all 0.22s;
+  }
+  .tab-btn:hover { border-color: var(--amber); color: var(--coffee); }
+  .tab-btn.active {
+    background: var(--espresso);
+    border-color: var(--espresso);
+    color: var(--amber-light);
+  }
+
+  .menu-panel { display: none; }
+  .menu-panel.active { display: block; }
+
+  .menu-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 1px;
+    background: var(--cream-dark);
+    border: 1px solid var(--cream-dark);
+    border-radius: 2px;
+    overflow: hidden;
+  }
+
+  .menu-item {
+    background: var(--white);
+    padding: 1.4rem 1.6rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 1rem;
+    transition: background 0.2s;
+  }
+  .menu-item:hover { background: var(--cream); }
+
+  .menu-item-info { flex: 1; }
+  .menu-item-name {
+    font-family: var(--serif);
+    font-size: 1rem;
+    color: var(--espresso);
+    margin-bottom: 0.3rem;
+    font-weight: 400;
+  }
+  .menu-item-desc {
+    font-size: 0.8rem;
+    color: var(--text-light);
+    line-height: 1.5;
+  }
+  .menu-item-price {
+    font-weight: 700;
+    font-size: 0.95rem;
+    color: var(--amber);
+    white-space: nowrap;
+    padding-top: 0.15rem;
+  }
+
+  .menu-note {
+    margin-top: 1.5rem;
+    font-size: 0.8rem;
+    color: var(--text-light);
+    font-style: italic;
+  }
+
+  /* ── Hours ────────────────────────────────────────────────── */
+  #hours {
+    padding: var(--section-pad);
+    background: var(--espresso);
+  }
+  .hours-inner {
+    max-width: var(--max-w);
+    margin: 0 auto;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: clamp(2rem, 6vw, 5rem);
+    align-items: start;
+  }
+
+  #hours .section-label { color: var(--amber); }
+  #hours .section-title { color: var(--white); }
+  #hours .section-intro { color: rgba(253,250,244,0.6); }
+
+  .hours-table {
+    background: rgba(255,255,255,0.05);
+    border: 1px solid rgba(200,134,42,0.2);
+    border-radius: 2px;
+    overflow: hidden;
+  }
+  .hours-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1rem 1.5rem;
+    border-bottom: 1px solid rgba(255,255,255,0.06);
+    font-size: 0.9rem;
+  }
+  .hours-row:last-child { border-bottom: none; }
+  .hours-day {
+    color: rgba(253,250,244,0.7);
+    font-weight: 500;
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+  }
+  .dot {
+    width: 6px; height: 6px;
+    border-radius: 50%;
+    background: var(--amber);
+    opacity: 0.5;
+    flex-shrink: 0;
+  }
+  .dot.today { background: #4CAF50; opacity: 1; }
+  .hours-time {
+    color: var(--white);
+    font-weight: 600;
+  }
+  .hours-time.closed { color: rgba(253,250,244,0.35); font-weight: 400; font-style: italic; }
+
+  .hours-note {
+    margin-top: 1.5rem;
+    padding: 1.1rem 1.5rem;
+    background: rgba(200,134,42,0.12);
+    border-left: 3px solid var(--amber);
+    border-radius: 0 2px 2px 0;
+    font-size: 0.85rem;
+    color: rgba(253,250,244,0.75);
+    line-height: 1.6;
+  }
+
+  @media (max-width: 700px) {
+    .hours-inner { grid-template-columns: 1fr; }
+  }
+
+  /* ── Location ─────────────────────────────────────────────── */
+  #location {
+    padding: var(--section-pad);
+    background: var(--cream-dark);
+  }
+  .location-inner {
+    max-width: var(--max-w);
+    margin: 0 auto;
+    display: grid;
+    grid-template-columns: 1fr 1.4fr;
+    gap: clamp(2rem, 6vw, 5rem);
+    align-items: start;
+  }
+
+  .location-map-placeholder {
+    aspect-ratio: 4/3;
+    background: var(--espresso);
+    border-radius: 2px;
+    position: relative;
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    gap: 1rem;
+    color: rgba(253,250,244,0.5);
+    font-size: 0.85rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+  .location-map-placeholder::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background:
+      linear-gradient(135deg, #3A1F0A 0%, #1A0D04 100%),
+      repeating-linear-gradient(0deg, transparent, transparent 30px, rgba(255,255,255,0.02) 30px, rgba(255,255,255,0.02) 31px),
+      repeating-linear-gradient(90deg, transparent, transparent 30px, rgba(255,255,255,0.02) 30px, rgba(255,255,255,0.02) 31px);
+  }
+  .map-pin {
+    font-size: 2.5rem;
+    position: relative;
+    animation: pin-bounce 2.5s ease-in-out infinite;
+  }
+  @keyframes pin-bounce {
+    0%, 100% { transform: translateY(0); }
+    50%       { transform: translateY(-8px); }
+  }
+  .map-label { position: relative; }
+
+  .location-info { }
+  .location-detail {
+    display: flex;
+    gap: 1rem;
+    align-items: flex-start;
+    margin-bottom: 1.6rem;
+  }
+  .location-icon {
+    width: 2.5rem;
+    height: 2.5rem;
+    background: var(--espresso);
+    color: var(--amber);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1rem;
+    flex-shrink: 0;
+    margin-top: 0.1rem;
+  }
+  .location-detail-text strong {
+    display: block;
+    font-weight: 700;
+    font-size: 0.78rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--text-light);
+    margin-bottom: 0.25rem;
+  }
+  .location-detail-text p {
+    color: var(--espresso);
+    font-size: 0.98rem;
+    line-height: 1.5;
+  }
+
+  .directions-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin-top: 0.5rem;
+    padding: 0.8rem 1.8rem;
+    background: var(--espresso);
+    color: var(--amber-light);
+    text-decoration: none;
+    font-size: 0.82rem;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    border-radius: var(--radius);
+    transition: background 0.2s;
+  }
+  .directions-btn:hover { background: var(--coffee); }
+
+  @media (max-width: 700px) {
+    .location-inner { grid-template-columns: 1fr; }
+  }
+
+  /* ── Contact ──────────────────────────────────────────────── */
+  #contact {
+    padding: var(--section-pad);
+    background: var(--white);
+  }
+  .contact-inner {
+    max-width: var(--max-w);
+    margin: 0 auto;
+    display: grid;
+    grid-template-columns: 1fr 1.2fr;
+    gap: clamp(2rem, 6vw, 5rem);
+    align-items: start;
+  }
+
+  .contact-form-wrap {
+    background: var(--cream);
+    border: 1px solid var(--cream-dark);
+    border-radius: 2px;
+    padding: clamp(1.5rem, 4vw, 2.5rem);
+  }
+
+  .form-group {
+    margin-bottom: 1.25rem;
+  }
+  .form-group label {
+    display: block;
+    font-size: 0.75rem;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--text-light);
+    margin-bottom: 0.45rem;
+  }
+  .form-group input,
+  .form-group textarea,
+  .form-group select {
+    width: 100%;
+    padding: 0.75rem 1rem;
+    background: var(--white);
+    border: 1.5px solid var(--cream-dark);
+    border-radius: var(--radius);
+    font-family: var(--sans);
+    font-size: 0.95rem;
+    color: var(--espresso);
+    transition: border-color 0.2s;
+    appearance: none;
+  }
+  .form-group input:focus,
+  .form-group textarea:focus,
+  .form-group select:focus {
+    outline: none;
+    border-color: var(--amber);
+  }
+  .form-group textarea { height: 110px; resize: vertical; }
+
+  .form-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+  }
+
+  .btn-submit {
+    width: 100%;
+    padding: 0.9rem;
+    background: var(--espresso);
+    color: var(--amber-light);
+    border: none;
+    border-radius: var(--radius);
+    font-family: var(--sans);
+    font-size: 0.85rem;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: background 0.2s, transform 0.2s;
+  }
+  .btn-submit:hover { background: var(--coffee); transform: translateY(-1px); }
+
+  .form-success {
+    display: none;
+    text-align: center;
+    padding: 2rem 1rem;
+    color: var(--espresso);
+  }
+  .form-success .success-icon { font-size: 2.5rem; margin-bottom: 0.75rem; }
+  .form-success p { color: var(--text-light); font-size: 0.95rem; line-height: 1.6; }
+
+  .contact-details { }
+  .contact-social {
+    display: flex;
+    gap: 0.75rem;
+    margin-top: 2rem;
+    flex-wrap: wrap;
+  }
+  .social-link {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.6rem 1.1rem;
+    background: var(--cream);
+    border: 1px solid var(--cream-dark);
+    border-radius: var(--radius);
+    text-decoration: none;
+    font-size: 0.8rem;
+    font-weight: 600;
+    color: var(--coffee);
+    transition: background 0.2s, border-color 0.2s;
+  }
+  .social-link:hover { background: var(--espresso); color: var(--amber-light); border-color: var(--espresso); }
+
+  @media (max-width: 700px) {
+    .contact-inner { grid-template-columns: 1fr; }
+    .form-row { grid-template-columns: 1fr; }
+  }
+
+  /* ── Footer ───────────────────────────────────────────────── */
+  footer {
+    background: var(--espresso);
+    padding: 2.5rem clamp(1.25rem, 5vw, 4rem);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 1rem;
+  }
+  .footer-logo {
+    font-family: var(--serif);
+    font-size: 1.1rem;
+    color: rgba(253,250,244,0.7);
+  }
+  .footer-logo span { color: var(--amber); }
+  footer p {
+    font-size: 0.78rem;
+    color: rgba(253,250,244,0.35);
+  }
+  .footer-links {
+    display: flex;
+    gap: 1.5rem;
+    list-style: none;
+  }
+  .footer-links a {
+    font-size: 0.78rem;
+    color: rgba(253,250,244,0.45);
+    text-decoration: none;
+    transition: color 0.2s;
+  }
+  .footer-links a:hover { color: var(--amber); }
+
+  /* ── Reduced motion ───────────────────────────────────────── */
+  @media (prefers-reduced-motion: reduce) {
+    .reveal { opacity: 1; transform: none; transition: none; }
+    .steam-line, .scroll-line, .map-pin { animation: none; }
+  }
+</style>
+</head>
+<body>
+
+<!-- ══ NAV ══════════════════════════════════════════════════ -->
+<nav id="main-nav">
+  <a href="#hero" class="nav-logo">The Daily <span>Grind</span></a>
+  <button class="nav-toggle" id="nav-toggle" aria-label="Open menu">
+    <span></span><span></span><span></span>
+  </button>
+  <ul class="nav-links" id="nav-links">
+    <li><a href="#about">Our Story</a></li>
+    <li><a href="#menu">Menu</a></li>
+    <li><a href="#hours">Hours</a></li>
+    <li><a href="#location">Find Us</a></li>
+    <li><a href="#contact">Contact</a></li>
+  </ul>
+</nav>
+
+<!-- ══ HERO ═════════════════════════════════════════════════ -->
+<section id="hero">
+  <div class="hero-content">
+    <span class="hero-eyebrow">☕ Brisbane's Neighbourhood Café</span>
+    <h1 class="hero-title">Start every<br>morning <em>right.</em></h1>
+    <p class="hero-subtitle">
+      Handcrafted coffee, honest food, and a warm corner of Fortitude Valley to call your own. 
+      We've been brewing Brisbane's days since 2011.
+    </p>
+    <div class="hero-ctas">
+      <a href="#menu" class="btn-primary">See the Menu</a>
+      <a href="#location" class="btn-ghost">Find Us</a>
+    </div>
+  </div>
+
+  <!-- Steam SVG -->
+  <div class="steam-wrap" aria-hidden="true">
+    <svg class="steam-cup" viewBox="0 0 200 260" xmlns="http://www.w3.org/2000/svg">
+      <!-- Steam lines -->
+      <line class="steam-line" x1="75" y1="55" x2="68" y2="10" stroke-width="3"/>
+      <line class="steam-line" x1="100" y1="50" x2="107" y2="5" stroke-width="3"/>
+      <line class="steam-line" x1="125" y1="55" x2="118" y2="10" stroke-width="3"/>
+      <!-- Cup body -->
+      <path d="M40 70 L55 200 H145 L160 70 Z" stroke="rgba(200,134,42,0.6)" stroke-width="2.5" fill="rgba(200,134,42,0.08)"/>
+      <!-- Saucer -->
+      <ellipse cx="100" cy="205" rx="75" ry="12" stroke="rgba(200,134,42,0.5)" stroke-width="2" fill="rgba(200,134,42,0.06)"/>
+      <!-- Handle -->
+      <path d="M160 100 Q195 100 195 145 Q195 190 160 185" stroke="rgba(200,134,42,0.5)" stroke-width="2.5" fill="none"/>
+      <!-- Coffee surface -->
+      <ellipse cx="100" cy="72" rx="60" ry="10" stroke="rgba(200,134,42,0.4)" stroke-width="1.5" fill="rgba(107,63,31,0.15)"/>
+    </svg>
+  </div>
+
+  <div class="hero-scroll-hint" aria-hidden="true">
+    <div class="scroll-line"></div>
+    Scroll
+  </div>
+</section>
+
+<!-- ══ ABOUT ═════════════════════════════════════════════════ -->
+<section id="about">
+  <div class="about-inner">
+    <div class="about-visual reveal">
+      <div class="about-img-frame">
+        <img src="https://images.pexels.com/photos/710264/pexels-photo-710264.jpeg?auto=compress&cs=tinysrgb&w=800" alt="Golden flaky croissant fresh from the oven" loading="lazy">
+      </div>
+      <div class="about-badge">
+        <strong>13+</strong>
+        Years<br>brewing
+      </div>
+    </div>
+
+    <div class="about-text reveal">
+      <span class="section-label">Our Story</span>
+      <h2 class="section-title">A café born from a love of mornings.</h2>
+      <div class="divider"><span class="divider-icon">✦</span></div>
+
+      <p>
+        <strong>The Daily Grind opened its doors in 2011</strong> in the heart of Fortitude Valley, 
+        founded by Mia and Tom Chen — a couple who believed that great coffee and good food 
+        shouldn't be reserved for special occasions.
+      </p>
+      <p>
+        What started as a 10-seat espresso bar has grown into the neighbourhood's favourite 
+        all-day café. We source our single-origin beans directly from small farms in northern 
+        Queensland and Papua New Guinea, roasted fresh each week by our friends at Valley Roasters.
+      </p>
+      <p>
+        Our kitchen keeps things seasonal, simple, and unfussy. Everything is made in-house — 
+        from the bread we bake each morning to the granola we jar up for the shelves. 
+        We cook the kind of food we want to eat ourselves.
+      </p>
+
+      <div class="about-values">
+        <span class="value-pill"><span class="icon">🌱</span> Locally sourced</span>
+        <span class="value-pill"><span class="icon">♻️</span> Compostable cups</span>
+        <span class="value-pill"><span class="icon">🐕</span> Dog friendly</span>
+        <span class="value-pill"><span class="icon">💻</span> WiFi available</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══ MENU ══════════════════════════════════════════════════ -->
+<section id="menu">
+  <div class="menu-inner">
+    <div class="menu-header reveal">
+      <span class="section-label">What we serve</span>
+      <h2 class="section-title">Something for every hour.</h2>
+      <div class="divider"><span class="divider-icon">✦</span></div>
+      <p class="section-intro">Fresh, seasonal, and made with care. Our menu changes with the market — these are our year-round staples.</p>
+    </div>
+
+    <div class="menu-tabs reveal">
+      <button class="tab-btn active" data-tab="breakfast">☀️ Breakfast</button>
+      <button class="tab-btn" data-tab="lunch">🥗 Lunch</button>
+      <button class="tab-btn" data-tab="coffee">☕ Coffee &amp; Drinks</button>
+    </div>
+
+    <!-- Breakfast -->
+    <div class="menu-panel active" id="tab-breakfast">
+      <div class="menu-grid">
+        <div class="menu-item">
+          <div class="menu-item-info">
+            <div class="menu-item-name">Smashed Avo & Feta</div>
+            <div class="menu-item-desc">House sourdough, whipped feta, heirloom tomato, dukkah, chilli oil</div>
+          </div>
+          <div class="menu-item-price">$21</div>
+        </div>
+        <div class="menu-item">
+          <div class="menu-item-info">
+            <div class="menu-item-name">Grind Brekkie Board</div>
+            <div class="menu-item-desc">Two eggs your way, bacon, house beans, roast tomato, sourdough toast</div>
+          </div>
+          <div class="menu-item-price">$26</div>
+        </div>
+        <div class="menu-item">
+          <div class="menu-item-info">
+            <div class="menu-item-name">Bircher Muesli</div>
+            <div class="menu-item-desc">Overnight oats, coconut yoghurt, seasonal fruit compote, toasted seeds</div>
+          </div>
+          <div class="menu-item-price">$17</div>
+        </div>
+        <div class="menu-item">
+          <div class="menu-item-info">
+            <div class="menu-item-name">Ricotta Hotcakes</div>
+            <div class="menu-item-desc">Three fluffy hotcakes, berry coulis, honeycomb butter, maple syrup</div>
+          </div>
+          <div class="menu-item-price">$22</div>
+        </div>
+        <div class="menu-item">
+          <div class="menu-item-info">
+            <div class="menu-item-name">Eggs Benny</div>
+            <div class="menu-item-desc">Poached eggs, house-cured salmon, spinach, hollandaise, brioche muffin</div>
+          </div>
+          <div class="menu-item-price">$24</div>
+        </div>
+        <div class="menu-item">
+          <div class="menu-item-info">
+            <div class="menu-item-name">Veggie Hash</div>
+            <div class="menu-item-desc">Sweet potato, zucchini, kale, poached egg, sriracha aioli <em>(GF, V)</em></div>
+          </div>
+          <div class="menu-item-price">$20</div>
+        </div>
+        <div class="menu-item">
+          <div class="menu-item-info">
+            <div class="menu-item-name">Grilled Bacon Sanga</div>
+            <div class="menu-item-desc">Thick-cut bacon, fried egg, gruyère, house relish, toasted milk bun</div>
+          </div>
+          <div class="menu-item-price">$16</div>
+        </div>
+        <div class="menu-item">
+          <div class="menu-item-info">
+            <div class="menu-item-name">Granola Bowl</div>
+            <div class="menu-item-desc">House-made granola, Greek yoghurt, seasonal fruit, local honey</div>
+          </div>
+          <div class="menu-item-price">$15</div>
+        </div>
+      </div>
+      <p class="menu-note">★ Gluten-free bread available +$2 · Eggs cooked to order · Ask our team about allergens</p>
+    </div>
+
+    <!-- Lunch -->
+    <div class="menu-panel" id="tab-lunch">
+      <div class="menu-grid">
+        <div class="menu-item">
+          <div class="menu-item-info">
+            <div class="menu-item-name">The Valley Club</div>
+            <div class="menu-item-desc">Chicken schnitzel, bacon, avocado, cos lettuce, aioli, toasted sourdough</div>
+          </div>
+          <div class="menu-item-price">$22</div>
+        </div>
+        <div class="menu-item">
+          <div class="menu-item-info">
+            <div class="menu-item-name">Grain Salad Bowl</div>
+            <div class="menu-item-desc">Farro, roasted pumpkin, goat's cheese, candied walnuts, lemon vinaigrette <em>(V)</em></div>
+          </div>
+          <div class="menu-item-price">$20</div>
+        </div>
+        <div class="menu-item">
+          <div class="menu-item-info">
+            <div class="menu-item-name">Smoked Salmon Bagel</div>
+            <div class="menu-item-desc">House-cured salmon, cream cheese, capers, red onion, dill, toasted sesame bagel</div>
+          </div>
+          <div class="menu-item-price">$19</div>
+        </div>
+        <div class="menu-item">
+          <div class="menu-item-info">
+            <div class="menu-item-name">Wagyu Beef Burger</div>
+            <div class="menu-item-desc">Wagyu patty, aged cheddar, caramelised onion, pickles, house sauce, chips</div>
+          </div>
+          <div class="menu-item-price">$28</div>
+        </div>
+        <div class="menu-item">
+          <div class="menu-item-info">
+            <div class="menu-item-name">Mushroom Toastie</div>
+            <div class="menu-item-desc">Mixed mushrooms, truffle oil, gruyère, thyme, house sourdough <em>(V)</em></div>
+          </div>
+          <div class="menu-item-price">$18</div>
+        </div>
+        <div class="menu-item">
+          <div class="menu-item-info">
+            <div class="menu-item-name">Soup of the Day</div>
+            <div class="menu-item-desc">Ask our team · Served with house-baked bread and butter</div>
+          </div>
+          <div class="menu-item-price">$15</div>
+        </div>
+      </div>
+      <p class="menu-note">★ Lunch served from 11:30 am daily · Kids menu available · Gluten-free options marked (GF)</p>
+    </div>
+
+    <!-- Coffee -->
+    <div class="menu-panel" id="tab-coffee">
+      <div class="menu-grid">
+        <div class="menu-item">
+          <div class="menu-item-info">
+            <div class="menu-item-name">Espresso</div>
+            <div class="menu-item-desc">Single origin, Valley Roasters — bright, juicy, caramel finish</div>
+          </div>
+          <div class="menu-item-price">$4.5</div>
+        </div>
+        <div class="menu-item">
+          <div class="menu-item-info">
+            <div class="menu-item-name">Flat White</div>
+            <div class="menu-item-desc">Double ristretto, silky microfoam — our most popular order</div>
+          </div>
+          <div class="menu-item-price">$5.5</div>
+        </div>
+        <div class="menu-item">
+          <div class="menu-item-info">
+            <div class="menu-item-name">Latte / Cappuccino</div>
+            <div class="menu-item-desc">Smooth, balanced, available in oat, almond, soy, macadamia +50¢</div>
+          </div>
+          <div class="menu-item-price">$6</div>
+        </div>
+        <div class="menu-item">
+          <div class="menu-item-info">
+            <div class="menu-item-name">Cold Brew</div>
+            <div class="menu-item-desc">12-hour steep, served over ice — straight or with oat milk</div>
+          </div>
+          <div class="menu-item-price">$7</div>
+        </div>
+        <div class="menu-item">
+          <div class="menu-item-info">
+            <div class="menu-item-name">Single Origin Pour-Over</div>
+            <div class="menu-item-desc">Rotating single-origin selection, brewed to order — ask the team today's pick</div>
+          </div>
+          <div class="menu-item-price">$8</div>
+        </div>
+        <div class="menu-item">
+          <div class="menu-item-info">
+            <div class="menu-item-name">House-made Chai Latte</div>
+            <div class="menu-item-desc">Spiced masala blend steeped in house, not a powder</div>
+          </div>
+          <div class="menu-item-price">$6.5</div>
+        </div>
+        <div class="menu-item">
+          <div class="menu-item-info">
+            <div class="menu-item-name">Matcha Latte</div>
+            <div class="menu-item-desc">Ceremonial grade matcha, steamed oat milk, touch of honey</div>
+          </div>
+          <div class="menu-item-price">$7</div>
+        </div>
+        <div class="menu-item">
+          <div class="menu-item-info">
+            <div class="menu-item-name">Fresh Juice</div>
+            <div class="menu-item-desc">Cold-pressed daily — ask for today's seasonal blend</div>
+          </div>
+          <div class="menu-item-price">$9</div>
+        </div>
+      </div>
+      <p class="menu-note">★ All prices in AUD · Decaf available upon request · Loyalty card: 10th coffee on us</p>
+    </div>
+  </div>
+</section>
+
+<!-- ══ HOURS ══════════════════════════════════════════════════ -->
+<section id="hours">
+  <div class="hours-inner">
+    <div class="reveal">
+      <span class="section-label">When to visit</span>
+      <h2 class="section-title">We're here when you need us.</h2>
+      <div class="divider"><span class="divider-icon">✦</span></div>
+      <p class="section-intro">Whether it's a quiet Tuesday morning or a buzzy Saturday brunch — there's always a seat and a smile waiting for you.</p>
+      <div class="hours-note">
+        🎉 <strong style="color:var(--amber)">Saturday &amp; Sunday</strong> — our kitchen runs a special brunch menu until 2 pm. 
+        No reservations needed; first come, first served.
+      </div>
+    </div>
+
+    <div class="hours-table reveal" id="hours-table">
+      <div class="hours-row">
+        <span class="hours-day"><span class="dot" id="dot-Mon"></span>Monday</span>
+        <span class="hours-time">7:00 am – 4:00 pm</span>
+      </div>
+      <div class="hours-row">
+        <span class="hours-day"><span class="dot" id="dot-Tue"></span>Tuesday</span>
+        <span class="hours-time">7:00 am – 4:00 pm</span>
+      </div>
+      <div class="hours-row">
+        <span class="hours-day"><span class="dot" id="dot-Wed"></span>Wednesday</span>
+        <span class="hours-time">7:00 am – 4:00 pm</span>
+      </div>
+      <div class="hours-row">
+        <span class="hours-day"><span class="dot" id="dot-Thu"></span>Thursday</span>
+        <span class="hours-time">7:00 am – 4:00 pm</span>
+      </div>
+      <div class="hours-row">
+        <span class="hours-day"><span class="dot" id="dot-Fri"></span>Friday</span>
+        <span class="hours-time">7:00 am – 5:00 pm</span>
+      </div>
+      <div class="hours-row">
+        <span class="hours-day"><span class="dot" id="dot-Sat"></span>Saturday</span>
+        <span class="hours-time">8:00 am – 3:00 pm</span>
+      </div>
+      <div class="hours-row">
+        <span class="hours-day"><span class="dot" id="dot-Sun"></span>Sunday</span>
+        <span class="hours-time">8:00 am – 2:00 pm</span>
+      </div>
+      <div class="hours-row">
+        <span class="hours-day"><span class="dot" style="background:#e44;opacity:0.7"></span>Public Holidays</span>
+        <span class="hours-time closed">Closed</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══ LOCATION ═══════════════════════════════════════════════ -->
+<section id="location">
+  <div class="location-inner">
+    <div class="reveal">
+      <span class="section-label">Find us</span>
+      <h2 class="section-title">Right in the heart of Fortitude Valley.</h2>
+      <div class="divider"><span class="divider-icon">✦</span></div>
+
+      <div class="location-detail">
+        <div class="location-icon">📍</div>
+        <div class="location-detail-text">
+          <strong>Address</strong>
+          <p>142 Brunswick Street<br>Fortitude Valley QLD 4006<br>Brisbane, Australia</p>
+        </div>
+      </div>
+
+      <div class="location-detail">
+        <div class="location-icon">🚌</div>
+        <div class="location-detail-text">
+          <strong>Getting here</strong>
+          <p>2 min walk from Fortitude Valley train station.<br>Street parking on Ann St and Brunswick St.</p>
+        </div>
+      </div>
+
+      <div class="location-detail">
+        <div class="location-icon">📞</div>
+        <div class="location-detail-text">
+          <strong>Phone</strong>
+          <p><a href="tel:+61732101234" style="color:var(--espresso);text-decoration:none;">(07) 3210 1234</a></p>
+        </div>
+      </div>
+
+      <div class="location-detail">
+        <div class="location-icon">✉️</div>
+        <div class="location-detail-text">
+          <strong>Email</strong>
+          <p><a href="mailto:hello@thedailygrind.com.au" style="color:var(--espresso);text-decoration:none;">hello@thedailygrind.com.au</a></p>
+        </div>
+      </div>
+
+      <a href="https://maps.google.com/?q=Brunswick+Street+Fortitude+Valley+Brisbane" target="_blank" rel="noopener" class="directions-btn">
+        ↗ Get Directions
+      </a>
+    </div>
+
+    <div class="location-map-placeholder reveal">
+      <div class="map-pin">📍</div>
+      <span class="map-label">142 Brunswick St, Fortitude Valley</span>
+    </div>
+  </div>
+</section>
+
+<!-- ══ CONTACT ════════════════════════════════════════════════ -->
+<section id="contact">
+  <div class="contact-inner">
+    <div class="reveal">
+      <span class="section-label">Get in touch</span>
+      <h2 class="section-title">We'd love to hear from you.</h2>
+      <div class="divider"><span class="divider-icon">✦</span></div>
+      <p class="section-intro" style="margin-bottom:2rem;">
+        Have a question about catering, a private event, or just want to say hello? 
+        Drop us a message and we'll get back to you within one business day.
+      </p>
+
+      <div class="location-detail">
+        <div class="location-icon">🎂</div>
+        <div class="location-detail-text">
+          <strong>Private events &amp; catering</strong>
+          <p>We cater for birthdays, corporate breakfasts, and intimate gatherings. 
+          Our back room seats up to 30 guests.</p>
+        </div>
+      </div>
+
+      <div class="contact-social">
+        <a href="#" class="social-link">📸 Instagram</a>
+        <a href="#" class="social-link">👍 Facebook</a>
+        <a href="#" class="social-link">🎵 TikTok</a>
+      </div>
+    </div>
+
+    <div class="contact-form-wrap reveal">
+      <div id="contact-form-inner">
+        <div class="form-row">
+          <div class="form-group">
+            <label for="cf-name">Your name</label>
+            <input type="text" id="cf-name" placeholder="Jane Smith">
+          </div>
+          <div class="form-group">
+            <label for="cf-email">Email address</label>
+            <input type="email" id="cf-email" placeholder="jane@example.com">
+          </div>
+        </div>
+        <div class="form-group">
+          <label for="cf-subject">Subject</label>
+          <select id="cf-subject">
+            <option value="">— Choose a topic —</option>
+            <option>General enquiry</option>
+            <option>Private event / catering</option>
+            <option>Feedback</option>
+            <option>Something else</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label for="cf-message">Message</label>
+          <textarea id="cf-message" placeholder="Tell us what's on your mind…"></textarea>
+        </div>
+        <button class="btn-submit" id="cf-submit">Send Message →</button>
+      </div>
+      <div class="form-success" id="form-success">
+        <div class="success-icon">☕</div>
+        <h3 style="margin-bottom:0.5rem;">Message sent!</h3>
+        <p>Thanks for reaching out. We'll be in touch within one business day. See you soon!</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══ FOOTER ═════════════════════════════════════════════════ -->
+<footer>
+  <div class="footer-logo">The Daily <span>Grind</span></div>
+  <p>© 2025 The Daily Grind · 142 Brunswick St, Fortitude Valley QLD 4006</p>
+  <ul class="footer-links">
+    <li><a href="#menu">Menu</a></li>
+    <li><a href="#hours">Hours</a></li>
+    <li><a href="#contact">Contact</a></li>
+  </ul>
+</footer>
+
+<script>
+  /* ── Nav scroll behaviour ─────────────────────────── */
+  const nav = document.getElementById('main-nav');
+  window.addEventListener('scroll', () => {
+    nav.classList.toggle('scrolled', window.scrollY > 60);
+  }, { passive: true });
+
+  /* ── Mobile nav toggle ────────────────────────────── */
+  const toggle = document.getElementById('nav-toggle');
+  const navLinks = document.getElementById('nav-links');
+  toggle.addEventListener('click', () => {
+    const open = navLinks.classList.toggle('open');
+    toggle.classList.toggle('open', open);
+    toggle.setAttribute('aria-expanded', open);
+  });
+  navLinks.querySelectorAll('a').forEach(a => {
+    a.addEventListener('click', () => {
+      navLinks.classList.remove('open');
+      toggle.classList.remove('open');
+    });
+  });
+
+  /* ── Reveal on scroll ─────────────────────────────── */
+  const revealEls = document.querySelectorAll('.reveal');
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(e => {
+      if (e.isIntersecting) {
+        e.target.classList.add('visible');
+        observer.unobserve(e.target);
+      }
+    });
+  }, { threshold: 0.12 });
+  revealEls.forEach(el => observer.observe(el));
+
+  /* ── Menu tabs ────────────────────────────────────── */
+  document.querySelectorAll('.tab-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+      document.querySelectorAll('.menu-panel').forEach(p => p.classList.remove('active'));
+      btn.classList.add('active');
+      document.getElementById('tab-' + btn.dataset.tab).classList.add('active');
+    });
+  });
+
+  /* ── Highlight today's hours ──────────────────────── */
+  const days = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
+  const today = days[new Date().getDay()];
+  const todayDot = document.getElementById('dot-' + today);
+  if (todayDot) todayDot.classList.add('today');
+
+  /* ── Contact form ─────────────────────────────────── */
+  document.getElementById('cf-submit').addEventListener('click', () => {
+    const name  = document.getElementById('cf-name').value.trim();
+    const email = document.getElementById('cf-email').value.trim();
+    const msg   = document.getElementById('cf-message').value.trim();
+
+    if (!name || !email || !msg) {
+      alert('Please fill in your name, email, and message before sending.');
+      return;
+    }
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+      alert('Please enter a valid email address.');
+      return;
+    }
+
+    document.getElementById('contact-form-inner').style.display = 'none';
+    document.getElementById('form-success').style.display = 'block';
+  });
+</script>
+</body>
+</html>
